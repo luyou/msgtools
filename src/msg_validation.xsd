@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"  
+elementFormDefault="qualified">
+
+<xs:simpleType name="valuetype">
+	<xs:restriction base="xs:string" />
+</xs:simpleType>
+
+<xs:simpleType name="contenttype">
+	<xs:restriction base="xs:string">
+		<xs:enumeration value="a" />
+		<xs:enumeration value="n" />
+		<xs:enumeration value="an" />
+		<xs:enumeration value="ans" />
+	</xs:restriction>
+</xs:simpleType>
+
+<xs:complexType name="fieldtype">
+	<xs:attribute name="caption" type="xs:string" use="required" />
+	<xs:attribute name="id" type="xs:string" use="required"/>
+	<xs:attribute name="type" type="xs:string" use="required"/>
+	<xs:attribute name="prefix" type="xs:string" use="optional" fixed="FL"/>
+	<xs:attribute name="len" type="xs:integer" use="optional"/>
+	<xs:attribute name="content" type="contenttype" use="optional"/>
+	<xs:attribute name="required" type="xs:boolean" use="optional"/>
+	<xs:attribute name="dtype" type="xs:dateTime" use="optional"/>
+	<xs:attribute name="array" type="xs:string" use="optional"/>
+	<xs:attribute name="value" type="xs:string" use="optional"/>
+	<xs:attribute name="maxlen" type="xs:integer" use="optional"/>
+</xs:complexType>
+
+<xs:complexType name="arraytype">
+	<xs:sequence>
+		<xs:element name="value" type="valuetype" maxOccurs="unbounded"/>
+	</xs:sequence>
+	<xs:attribute name="id" type="valuetype" use="optional"/>
+	<xs:attribute name="caption" type="valuetype" use="optional"/>
+</xs:complexType>
+
+<xs:complexType name="constanttype">
+	<xs:sequence>
+		<xs:element name="array" type="arraytype" maxOccurs="unbounded"/>
+	</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="othertype">
+	<xs:sequence>
+		<xs:element name="field" type="fieldtype" minOccurs="0"/>
+	</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="routetype">
+	<xs:sequence>
+		<xs:element name="rset" type="rsettype" minOccurs="0"/>
+		<xs:element name="field" type="fieldtype" minOccurs="0"/>
+	</xs:sequence>
+	<xs:attribute name="caption" type="valuetype" use="optional"/>
+	<xs:attribute name="value" type="xs:string" use="required"/>
+</xs:complexType>
+
+<xs:simpleType name="reftype">
+	<xs:restriction base="xs:string">
+		<xs:pattern value="([a-zA-Z])+"/>
+	</xs:restriction>
+</xs:simpleType>
+
+<xs:complexType name="rsettype">
+	<xs:sequence>
+		<xs:element name="route" type="routetype" />
+		<xs:element name="other" type="othertype" />
+	</xs:sequence>
+	<xs:attribute name="caption" type="valuetype" use="optional"/>
+	<xs:attribute name="ref" type="reftype" use="required"/>
+</xs:complexType>
+
+<xs:complexType name="fsettype">
+	<xs:choice>
+		<xs:element name="field" type="fieldtype"/>
+		<xs:element name="rset" type="rsettype"/>
+	</xs:choice>
+	<xs:attribute name="id" type="valuetype" use="optional"/>
+	<xs:attribute name="caption" type="valuetype" use="optional"/>
+</xs:complexType>
+
+<xs:complexType name="msgtype">
+	<xs:sequence>
+		<xs:element name="fset" type="fsettype" maxOccurs="unbounded"/>
+	</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="xmltype">
+	<xs:sequence>
+		<xs:element name="constant" type="constanttype"/>
+		<xs:element name="msg" type="msgtype"/>
+	</xs:sequence>
+</xs:complexType>
+
+<xs:element name="xml" type="xmltype"/>
+</xs:schema>

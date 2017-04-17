@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="msg_validation.xsd">
+	<constant>
+		<array id="msgverArray" caption="消息版本号范围">
+			<value>001</value>
+			<value>002</value>
+		</array>
+		<array id="dfArray" caption="数据方向标识域范围">
+			<value>R</value>
+			<value>A</value>
+		</array>
+		<array id="msgCodeArray" caption="数据方向标识域范围">
+			<value>001</value>
+			<value>002</value>
+		</array>
+		<array id="bankTagArray" caption="网银标识范围">
+			<value>01</value>
+			<value>02</value>
+		</array>
+		<array id="bankCodeArrayPri" caption="个人银行代码范围">
+			<value>0001</value>
+			<value>0002</value>
+			<value>0003</value>
+			<value>0004</value>
+			<value>0006</value>
+			<value>0007</value>
+			<value>0008</value>
+			<value>0009</value>
+			<value>0010</value>
+			<value>0011</value>
+			<value>0012</value>
+			<value>0013</value>
+			<value>0014</value>
+			<value>0018</value>
+			<value>0019</value>
+			<value>0023</value>
+			<value>0024</value>
+		</array>
+		<array id="bankCodeArrayPub" caption="企业银行代码范围">
+			<value>0001</value>
+			<value>0002</value>
+			<value>0003</value>
+			<value>0004</value>
+			<value>0005</value>
+			<value>0006</value>
+			<value>0007</value>
+			<value>0008</value>
+			<value>0009</value>
+			<value>0010</value>
+			<value>0011</value>
+			<value>0012</value>
+			<value>0013</value>
+			<value>0014</value>
+			<value>0020</value>
+			<value>0021</value>
+			<value>0022</value>
+			<value>0023</value>
+		</array>
+		<array id="customsCodeArray" caption="通关口岸范围">
+			<value>01</value>
+			<value>02</value>
+			<value>03</value>
+			<value>04</value>
+			<value>05</value>
+			<value>06</value>
+			<value>07</value>
+			<value>08</value>
+			<value>91</value>
+			<value>92</value>
+			<value>93</value>
+			<value>94</value>
+		</array>
+		<array id="operateTypeArray" caption="申报类型范围">
+			<value>1</value>
+			<value>2</value>
+			<value>3</value>
+		</array>
+		<array id="booleanArray" caption="布尔类型">
+			<!-- 否 -->
+			<value>0</value>
+			<!-- 是 -->
+			<value>1</value>
+		</array>
+		<array id="paymentProtocolsArray" caption="支付类型范围">
+			<!-- 报关支付，纯网银 -->
+			<value>GW</value>
+			<!-- 支付到合作方 -->
+			<value>PB</value>
+			<!-- 支付给指定用户 -->
+			<value>PT</value>
+			<!-- 支付给订单用户 -->
+			<value>PP</value>
+		</array>
+		<array id="payTypeArray" caption="支付类型">
+			<!-- 报关支付，纯网银 -->
+			<value>A</value>
+			<!-- 支付到合作方 -->
+			<value>S</value>
+			<!-- 支付给指定用户 -->
+			<value>X</value>
+		</array>
+	</constant>
+	<msg id="ap">
+		<fset id="head" caption="消息头域">
+			<field caption="合作方编码" id="partnerId" type="xvar" prefix="FL"
+				len="8" content="an" required="true" />
+			<field caption="报文流水号" id="transNo" type="fixed" len="30"
+				content="ans" required="true" />
+			<field caption="时间戳" id="timeStamp" type="date" dtype="yyyyMMddHHmmss"
+				content="ans" required="true" />
+			<field caption="消息版本号" id="messageVersion" type="fixvar" array="msgverArray"
+				content="ans" required="true" />
+			<field caption="数据方向标识域" id="dataDirection" type="fixvar"
+				array="dfArray" content="a" required="true" />
+			<field caption="交易控制码" id="messageCode" type="fixvar" array="msgCodeArray"
+				content="n" required="true" />
+			<field caption="加密类型码" id="encryptionCode" type="fixed" value="001"
+				required="true" />
+		</fset>
+		<fset id="body">
+			<rset caption="消息主体" ref="head.messageCode">
+				<route caption="账户充值" value="001">
+					<field caption="后台通知地址" id="backNotifyUrl" maxlen="200"
+						content="ans" type="http_address" required="true" />
+					<field caption="页面通知地址" id="pageNotifyUrl" maxlen="200"
+						type="http_address" required="true" />
+					<field caption="充值金额" id="amt" maxlen="12" type="amt"
+						required="true" />
+					<field caption="充值账号" id="accountId" type="var" maxlen="60"
+						content="ans" required="true" />
+					<field caption="网银标识" id="bankTag" type="fixed" maxlen="2"
+						array="bankTagArray" />
+					<rset ref="bankTag">
+						<route value="01">
+							<field caption="个人银行代码" id="bankCode" type="fixed"
+								array="bankCodeArrayPri" />
+						</route>
+						<other>
+							<field caption="企业银行代码" id="bankCode" type="fixed"
+								array="bankCodeArrayPub" />
+						</other>
+					</rset>
+				</route>
+				<route caption="网关支付" value="006">
+					<rset caption="版本号识别" ref="head.messageVersion">
+						<route caption="版本001" value="001">
+							<field caption="后台通知地址" id="backNotifyUrl" maxlen="200"
+								content="ans" type="http_address" required="true" />
+							<field caption="页面通知地址" id="pageNotifyUrl" maxlen="200"
+								type="http_address" required="true" />
+							<field id="amt" type="amt" caption="网关支付总金额" />
+							<field id="accountId" type="var" maxlen="60" caption="付款用户账号" />
+							<field id="targetId" type="var" maxlen="60" caption="指定收款用户账号" />
+							<field id="creditId" type="var" maxlen="60" caption="融资授信方账号" />
+							<field id="paymentProtocolsNo" type="fixed" array="paymentProtocolsArray"
+								caption="支付协议类型" />
+							<field id="securedTransactions" type="fixed" array="booleanArray"
+								caption="担保交易" />
+							<field id="bankTag" type="fixed" maxlen="2" array="bankTagArray"
+								caption="网银标识" />
+							<rset ref="bankTag">
+								<route value="01">
+									<field caption="个人银行代码" id="bankCode" type="fixed"
+										array="bankCodeArrayPri" />
+								</route>
+								<other>
+									<field caption="企业银行代码" id="bankCode" type="fixed"
+										array="bankCodeArrayPub" />
+								</other>
+							</rset>
+							<loop caption="报关单集合" id="requestSet">
+								<fset caption="报关单" id="request">
+									<fset caption="报关信息" id="customs">
+										<field id="orderId" type="var" maxlen="30" caption="商户订单号" />
+										<field id="ecommerceCode" type="var" maxlen="30"
+											caption="电商平台编号" />
+										<field id="payMerchantCode" type="var" maxlen="30"
+											caption="支付商家编号" />
+										<field id="payMerchantName" type="var" maxlen="100"
+											caption="支付商家名称" />
+										<field id="customsCode" type="fixed" caption="通关口岸"
+											array="customsCodeArray" />
+										<field id="operateType" type="fixed" array="operateTypeArray"
+											caption="申报类型" />
+										<field id="rem" type="var" maxlen="60" caption="备注" />
+										<field id="gjCode" type="var" maxlen="30" caption="国检备案号" />
+									</fset>
+									<fset caption="支付信息" id="payment">
+										<field id="ufxPayAmt" type="amt" caption="富友支付金额" />
+										<field id="originalTradeWebsite" type="var" maxlen="100"
+											caption="原交易店铺网址" />
+										<field id="originalPaymentInstitution" type="var"
+											maxlen="50" caption="原支付机构" />
+										<field id="originalPayAmt" type="amt" caption="原支付金额" />
+										<field id="originalPayNo" type="var" maxlen="50"
+											caption="原支付流水号" />
+										<field id="payType" type="fixed" array="payTypeArray"
+											caption="支付类型" />
+										<field id="orderGoodsAmt" type="amt" caption="支付货款" />
+										<field id="orderTaxAmt" type="amt" caption="支付税款" />
+										<field id="orderFeeAmt" type="amt" caption="支付运费" />
+										<field id="orderAmtCurrency" type="fixed" len="3"
+											caption="支付金额币种" />
+										<field id="originalPayDate" type="rule" regExp="bankCodeArrayPri" caption="原交易付款时间" />
+										<rset ref="customsCode">
+											<route value="01">
+												<field caption="原交易付款时间" id="originalPayDate" type="rule"
+													regExp="bankCodeArrayPri" />
+											</route>
+											<other>
+												<field caption="原交易付款时间" id="originalPayDate" type="rule"
+													regExp="bankCodeArrayPub" />
+											</other>
+										</rset>
+									</fset>
+									<fset caption="客户信息" id="userInfo">
+										<field id="payerName" type="var" maxlen="10" caption="姓名" />
+										<field id="payerIdNumber" type="var" maxlen="20"
+											caption="证件号" />
+										<field id="phoneNumber" type="var" maxlen="20" caption="手机号" />
+										<field id="payerEcommerceId" type="var" maxlen="60"
+											caption="付款人电商平台ID" />
+									</fset>
+								</fset>
+							</loop>
+						</route>
+						<other caption="其他版本">
+							<field caption="页面通知地址" id="pageNotifyUrl" maxlen="200"
+								type="http_address" required="true" />
+						</other>
+					</rset>
+				</route>
+			</rset>
+		</fset>
+	</msg>
+</xml>

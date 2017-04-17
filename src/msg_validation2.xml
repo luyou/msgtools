@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml>
+	<msg id="ap">
+		<field caption="合作方编码" id="partnerId" type="xvar" prefix="FL"
+			len="8" content="an" required="true" />
+		<field caption="报文流水号" id="transNo" type="fixed" len="30"
+			content="ans" required="true" />
+		<field caption="时间戳" id="timeStamp" type="rule" regExp="yyyyMMddHHmmss"
+			content="ans" required="true" />
+	</msg>
+</xml>

@@ -1,0 +1,100 @@
+msgtools拆组包设计
+    	--> 语义元素
+    			-xml
+    				-constant
+    					-array
+    				-msg
+    					-fset
+    						-fset
+    						-field
+    						-rest
+    						-loop
+    					-rset
+    						-route
+    							-fset
+    							-rset
+    							-loop
+    							-field
+    						-other
+    							-fset
+    							-rset
+    							-loop
+    							-field
+    					-loop
+    						-fset
+    						-rset
+    						-loop
+    						-field
+    					-field
+    	--> 详细描述
+    			-xml
+    				-描述: 校验规则文件的根元素;
+    			-constant
+    				-描述: 校验规则文件中的常量域根元素;
+    			-array
+    				-描述: 校验规则文件常量域中的数组元素;
+    				-属性: 
+    					-id: 元素唯一标识,constant域下唯一;(必需)
+    					-caption: 元素节点描述;
+    					-value: array常量数组的值,可出现多次;(必需)
+    			-msg
+    				-描述: 校验规则文件消息域正文根元素;
+    				-属性: 
+    					-id: 元素唯一标识,全文唯一,标识一组消息的校验规则配置;(必需)
+    					-caption: 元素节点描述;
+    			-fset
+    				-描述: 校验规则文件消息域正中,层元素,界定层级关系;
+    				-属性: 
+    					-id: 元素唯一标识,msg域下唯一;(必需)
+    					-caption: 元素节点描述;
+    					-required: 是否关键域;
+    			-loop
+    				-描述: 校验规则文件消息域正中,遍历元素,标识重复结构;
+    				-属性: 
+    					-id: 元素唯一标识,msg域下唯一;(必需)
+    					-caption: 元素节点描述;
+    					-len: 域长度,定长;
+    					-maxlen: 域最大长度;
+    					-required: 是否关键域;
+    			-rset
+    				-描述: 校验规则文件消息域正中,条件选择元素,根据关联域取值选择逻辑分支;
+    				-属性: 
+    					-id: 元素唯一标识,msg域下唯一;
+    					-caption: 元素节点描述;
+    					-ref: 关联域id,以id和"."定位关联域;(必需)
+    					-required: 是否关键域;
+    			-route
+    				-描述: 校验规则文件消息域正中,匹配父rset关联域取值执行逻辑分支;
+    				-属性: 
+    					-id: 元素唯一标识,msg域下唯一;
+    					-caption: 元素节点描述;
+    					-value: 父元素ref关联域的匹配值，匹配则执行route(必需)
+    			-other
+    				-描述: 校验规则文件消息域正中,匹配父rset关联域取值,执行未精确定位到的所有逻辑分支
+    				-属性: 
+    					-id: 元素唯一标识,msg域下唯一;
+    					-caption: 元素节点描述;
+    			-field
+    				-描述: 校验规则文件消息域正中,域元素,最上层元素;
+    				-属性: 
+    					-id: 元素名;(必需)
+    					-caption: 元素节点描述;
+    					-content: 值类型
+    						-a: 字符型,字母;
+    						-n: 字符型,数字;
+    						-s: 字符型,特殊字符;
+    					-type: 域类型 (必需)
+    						-var: 不定长字符串，默认，一般需maxlen属性配合;
+    						-fixed: 定长字符串，需len属性配合;
+    						-fixVar: 带有前缀或后缀的字符串，需与prefix或suffix配合;
+    						-amt: 金额格式字符串
+    						-rule:  匹配regExp规则，需要与regExp属性配合;
+    					-len:  域长度;
+    					-maxlen: 域最大长度;
+    					-prefix: 值前缀;
+    					-suffix: 值后缀;
+    					-regExp: type为rule的正则表达式;
+    					-array: 取值范围数组；
+    					-value: 定值；
+    					-required: 是否关键域;
+    					
